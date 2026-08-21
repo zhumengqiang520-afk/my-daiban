@@ -36,15 +36,28 @@ jobs:
         env:
           TARGET_IMAGE: ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}
         run: |
+          retry_push() {
+            image="$1"
+            attempt=1
+            while ! docker push "$image"; do
+              if [ "$attempt" -ge 4 ]; then
+                echo "Failed to push $image after $attempt attempts" >&2
+                return 1
+              fi
+              attempt=$((attempt + 1))
+              sleep $((attempt * 5))
+            done
+          }
+
           docker pull --platform linux/amd64 postgres:16.14-alpine3.22
           docker tag postgres:16.14-alpine3.22 "$TARGET_IMAGE:postgres-16.14-alpine3.22"
-          docker push "$TARGET_IMAGE:postgres-16.14-alpine3.22"
+          retry_push "$TARGET_IMAGE:postgres-16.14-alpine3.22"
           docker pull --platform linux/amd64 caddy:2.11.4-alpine
           docker tag caddy:2.11.4-alpine "$TARGET_IMAGE:caddy-2.11.4-alpine"
-          docker push "$TARGET_IMAGE:caddy-2.11.4-alpine"
+          retry_push "$TARGET_IMAGE:caddy-2.11.4-alpine"
           docker pull --platform linux/amd64 certbot/certbot:v5.4.0
           docker tag certbot/certbot:v5.4.0 "$TARGET_IMAGE:certbot-5.4.0"
-          docker push "$TARGET_IMAGE:certbot-5.4.0"
+          retry_push "$TARGET_IMAGE:certbot-5.4.0"
 
   build:
     runs-on: ubuntu-latest
