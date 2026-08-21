@@ -82,6 +82,7 @@ Vikunja 的通用审计日志和部分企业能力由其许可证系统提供。
 双人开发、兼职测试和一名业务负责人的目标周期为 10—11 周。单人开发通常需要 14—18 周。
 
 详细排期见 [docs/engineering/DELIVERY_PLAN.md](docs/engineering/DELIVERY_PLAN.md)。
+测试层次、关键权限用例和门店 UAT 剧本见 [docs/engineering/QA_PLAN.md](docs/engineering/QA_PLAN.md)。
 
 ## 6. 项目治理
 
