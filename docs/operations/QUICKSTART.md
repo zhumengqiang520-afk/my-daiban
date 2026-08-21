@@ -1,13 +1,13 @@
 # 生产部署快速指南
 
-本指南对应 `deploy/retail` 中的单机生产试点方案：Caddy 自动 HTTPS、Vikunja 零售扩展、PostgreSQL 16 和本地持久化附件。正式大规模上线可将 PostgreSQL 和附件分别替换为托管数据库与 S3 对象存储。
+本指南对应 `deploy/retail` 中的单机生产试点方案：Caddy、Vikunja 零售扩展、PostgreSQL 16 和本地持久化附件。有域名时 Caddy 自动配置 HTTPS；无域名时可先通过公网 IP 的 HTTP 方式试运行。正式大规模上线可将 PostgreSQL 和附件分别替换为托管数据库与 S3 对象存储。
 
 ## 1. 上线前准备
 
-- 一台 Linux 主机，试点建议 4 vCPU、8 GB 内存、100 GB SSD。
+- 一台受支持的 Linux 主机。试点建议 4 vCPU、8 GB 内存、100 GB SSD；2 vCPU、2 GB 内存、40 GB SSD 可用于少量用户试运行，但应使用预构建镜像并配置至少 2 GB swap。
 - 已安装 Docker Engine 和 Docker Compose v2。
-- 域名 A/AAAA 记录已指向主机，80/443 TCP 以及 443 UDP 已放行。
-- 中国大陆公网使用时已完成所需备案。
+- 正式上线时，域名 A/AAAA 记录已指向主机，80/443 TCP 以及 443 UDP 已放行；仅按 IP 试运行时至少放行 80 TCP。
+- 中国大陆公网使用域名时已完成所需备案。
 - 企业 GitHub fork 可被系统用户访问，用于履行 AGPL 源码提供义务。
 
 ## 2. 首次部署
@@ -20,17 +20,29 @@ cp .env.example .env
 openssl rand -hex 32
 ```
 
-将生成值填入 `.env` 的 `SERVICE_SECRET`，同时替换域名、源码地址和数据库密码。`APP_UID` / `APP_GID` 应与部署账号的 `id -u` / `id -g` 一致。
+将生成值填入 `.env` 的 `SERVICE_SECRET`，同时替换访问地址、源码地址、镜像地址和数据库密码。`APP_UID` / `APP_GID` 应与部署账号的 `id -u` / `id -g` 一致。
+
+无域名试运行示例：
+
+```dotenv
+SITE_ADDRESS=http://101.132.17.166
+PUBLIC_URL=http://101.132.17.166/
+SOURCE_CODE_URL=https://github.com/zhumengqiang520-afk/my-daiban
+APP_IMAGE=ghcr.io/zhumengqiang520-afk/my-daiban
+IMAGE_TAG=latest
+```
+
+有域名时将前两项改为 `SITE_ADDRESS=tasks.example.com` 和 `PUBLIC_URL=https://tasks.example.com/`。
 
 ```sh
 ./scripts/prepare.sh
-docker compose build
+docker compose pull
 docker compose up -d
 docker compose ps
 ./scripts/smoke-test.sh
 ```
 
-首次构建会下载 Go、Node 和前端依赖，所需时间取决于网络。服务启动时会自动执行向前数据库迁移。
+首次启动会从 GHCR 下载已由 GitHub Actions 构建的应用镜像。这样可避免低配置生产机在本地编译时耗尽内存。服务启动时会自动执行向前数据库迁移。
 
 ## 3. 创建首个管理员
 
@@ -41,7 +53,7 @@ docker compose run --rm app user create --username admin --email admin@example.c
 docker compose run --rm app user set-admin admin --admin
 ```
 
-登录 `https://<DOMAIN>/`。左侧菜单出现“零售任务”，说明零售模块已启用。
+登录 `.env` 中的 `PUBLIC_URL`。左侧菜单出现“零售任务”，说明零售模块已启用。
 
 ## 4. 初始化业务数据
 
@@ -59,7 +71,7 @@ docker compose run --rm app user set-admin admin --admin
 ./scripts/backup.sh
 git fetch --tags
 git checkout <approved-version-tag>
-docker compose build --pull
+docker compose pull
 docker compose up -d
 ./scripts/smoke-test.sh
 ```
@@ -88,4 +100,3 @@ docker compose logs --since=30m app
 - `/source-code` 跳转到本企业 fork。
 - 店员无法读取其他门店的人员、任务、凭证和指标。
 - 手机端可完成任务，店长可复核，负荷和运营总览同步更新。
-

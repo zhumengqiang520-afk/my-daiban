@@ -18,6 +18,11 @@ fi
 mkdir -p "$DEPLOY_DIR/data/files" "$DEPLOY_DIR/backups"
 chmod 700 "$DEPLOY_DIR/backups"
 
+# The host may be prepared by root while the application container runs as a
+# non-root uid/gid. Make the bind-mounted paths writable by that container user.
+if [ "$(id -u)" -eq 0 ]; then
+	chown -R "${APP_UID:-1000}:${APP_GID:-1000}" "$DEPLOY_DIR/data/files" "$DEPLOY_DIR/backups"
+fi
+
 docker compose --project-directory "$DEPLOY_DIR" --env-file "$DEPLOY_DIR/.env" -f "$DEPLOY_DIR/compose.yml" config >/dev/null
 printf '%s\n' "Deployment directories and Compose configuration are ready."
-

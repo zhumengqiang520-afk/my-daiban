@@ -1,4 +1,4 @@
-{$DOMAIN} {
+{$SITE_ADDRESS} {
 	encode zstd gzip
 
 	@source path /source-code
@@ -17,4 +17,3 @@
 
 	reverse_proxy app:3456
 }
-

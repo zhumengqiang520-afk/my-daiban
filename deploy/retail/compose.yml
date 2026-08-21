@@ -20,19 +20,14 @@ services:
     networks: [backend]
 
   app:
-    image: retail-taskboard:${IMAGE_TAG:-local}
-    build:
-      context: ../..
-      dockerfile: Dockerfile
-      args:
-        RELEASE_VERSION: ${IMAGE_TAG:-local}
+    image: ${APP_IMAGE:-retail-taskboard}:${IMAGE_TAG:-local}
     restart: unless-stopped
     user: ${APP_UID:-1000}:${APP_GID:-1000}
     depends_on:
       db:
         condition: service_healthy
     environment:
-      VIKUNJA_SERVICE_PUBLICURL: https://${DOMAIN:?set DOMAIN in .env}/
+      VIKUNJA_SERVICE_PUBLICURL: ${PUBLIC_URL:?set PUBLIC_URL in .env}
       VIKUNJA_SERVICE_SECRET: ${SERVICE_SECRET:?set SERVICE_SECRET in .env}
       VIKUNJA_SERVICE_ENABLEREGISTRATION: ${ENABLE_REGISTRATION:-false}
       VIKUNJA_SERVICE_TIMEZONE: Asia/Shanghai
@@ -66,7 +61,7 @@ services:
       app:
         condition: service_healthy
     environment:
-      DOMAIN: ${DOMAIN:?set DOMAIN in .env}
+      SITE_ADDRESS: ${SITE_ADDRESS:?set SITE_ADDRESS in .env}
       SOURCE_CODE_URL: ${SOURCE_CODE_URL:?set SOURCE_CODE_URL in .env}
     ports:
       - "80:80"
