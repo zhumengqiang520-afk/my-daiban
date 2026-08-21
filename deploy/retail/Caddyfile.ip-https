@@ -1,0 +1,32 @@
+http://{$SITE_ADDRESS} {
+	handle /.well-known/acme-challenge/* {
+		root * /var/www/certbot
+		file_server
+	}
+
+	handle {
+		redir https://{$SITE_ADDRESS}{uri} permanent
+	}
+}
+
+https://{$SITE_ADDRESS} {
+	tls {$TLS_CERT_FILE} {$TLS_KEY_FILE}
+	encode zstd gzip
+
+	handle /source-code {
+		redir {$SOURCE_CODE_URL} 302
+	}
+
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	request_body {
+		max_size 55MB
+	}
+
+	reverse_proxy app:3456
+}

@@ -15,7 +15,7 @@ if grep -q 'CHANGE_ME' "$DEPLOY_DIR/.env"; then
 	exit 1
 fi
 
-mkdir -p "$DEPLOY_DIR/data/files" "$DEPLOY_DIR/backups"
+mkdir -p "$DEPLOY_DIR/data/files" "$DEPLOY_DIR/backups" "$DEPLOY_DIR/certbot-webroot" "$DEPLOY_DIR/letsencrypt"
 chmod 700 "$DEPLOY_DIR/backups"
 
 # The host may be prepared by root while the application container runs as a

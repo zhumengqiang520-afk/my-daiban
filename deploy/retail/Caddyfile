@@ -1,19 +1,26 @@
 {$SITE_ADDRESS} {
 	encode zstd gzip
 
-	@source path /source-code
-	redir @source {$SOURCE_CODE_URL} 302
-
-	header {
-		Strict-Transport-Security "max-age=31536000; includeSubDomains"
-		X-Content-Type-Options "nosniff"
-		Referrer-Policy "strict-origin-when-cross-origin"
-		-Server
+	handle /.well-known/acme-challenge/* {
+		root * /var/www/certbot
+		file_server
 	}
 
-	request_body {
-		max_size 55MB
+	handle /source-code {
+		redir {$SOURCE_CODE_URL} 302
 	}
 
-	reverse_proxy app:3456
+	handle {
+		header {
+			X-Content-Type-Options "nosniff"
+			Referrer-Policy "strict-origin-when-cross-origin"
+			-Server
+		}
+
+		request_body {
+			max_size 55MB
+		}
+
+		reverse_proxy app:3456
+	}
 }

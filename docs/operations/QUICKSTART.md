@@ -31,10 +31,21 @@ SOURCE_CODE_URL=https://github.com/zhumengqiang520-afk/my-daiban
 APP_IMAGE=ghcr.io/zhumengqiang520-afk/my-daiban
 POSTGRES_IMAGE=ghcr.io/zhumengqiang520-afk/my-daiban:postgres-16.14-alpine3.22
 CADDY_IMAGE=ghcr.io/zhumengqiang520-afk/my-daiban:caddy-2.11.4-alpine
+CERTBOT_IMAGE=ghcr.io/zhumengqiang520-afk/my-daiban:certbot-5.4.0
 IMAGE_TAG=latest
 ```
 
-有域名时将前两项改为 `SITE_ADDRESS=tasks.example.com` 和 `PUBLIC_URL=https://tasks.example.com/`。
+无域名时先以 HTTP 启动，并执行 `./scripts/issue-ip-certificate.sh`。证书签发成功后将 `.env` 改为：
+
+```dotenv
+CADDYFILE=./Caddyfile.ip-https
+SITE_ADDRESS=101.132.17.166
+PUBLIC_URL=https://101.132.17.166/
+TLS_CERT_FILE=/etc/letsencrypt/live/101.132.17.166/fullchain.pem
+TLS_KEY_FILE=/etc/letsencrypt/live/101.132.17.166/privkey.pem
+```
+
+随后运行 `docker compose up -d --force-recreate app caddy` 和 `./scripts/smoke-test.sh`。IP 证书有效期约 6 天，必须每天运行 `scripts/renew-ip-certificate.sh`。有域名时无需 IP 证书脚本，只需使用 `Caddyfile`，并将前两项改为 `SITE_ADDRESS=tasks.example.com` 和 `PUBLIC_URL=https://tasks.example.com/`。
 
 ```sh
 ./scripts/prepare.sh

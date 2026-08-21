@@ -68,7 +68,9 @@ services:
       - "443:443"
       - "443:443/udp"
     volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ${CADDYFILE:-./Caddyfile}:/etc/caddy/Caddyfile:ro
+      - ./certbot-webroot:/var/www/certbot:ro
+      - ./letsencrypt:/etc/letsencrypt:ro
       - caddy-data:/data
       - caddy-config:/config
     networks: [edge]
