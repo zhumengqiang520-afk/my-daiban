@@ -43,6 +43,7 @@ PostgreSQL  对象存储   通知适配器
 - `retail_checklist_items`：验收清单及完成状态。
 - `retail_submissions` / `retail_submission_files`：每次完成提交及凭证。
 - `retail_reviews`：通过、驳回和意见。
+- `retail_task_transitions`：独立于通用审计的零售任务业务状态流转历史。
 - `retail_escalation_policies` / `retail_notification_deliveries`：升级规则和发送幂等。
 - 任务提交和复核历史保存在对应业务表；通用审计复用获得许可的 Vikunja 审计能力。
 
@@ -89,14 +90,17 @@ draft / assigned / in_progress -> cancelled
 | `POST /api/v2/retail/templates/{id}/dispatch-preview` | 预览批量派发 |
 | `POST /api/v2/retail/templates/{id}/dispatch` | 幂等派发 |
 | `POST /api/v2/retail/tasks/{id}/start` | 开始任务 |
+| `GET /api/v2/retail/tasks/{id}/workflow` | 读取清单、提交、复核及流转历史 |
+| `PUT /api/v2/retail/checklist-items/{id}/completion` | 勾选或取消清单项 |
 | `POST /api/v2/retail/tasks/{id}/submissions` | 提交完成凭证 |
 | `POST /api/v2/retail/tasks/{id}/reviews` | 通过或驳回 |
+| `POST /api/v2/retail/tasks/{id}/cancel` | 由组织管理员取消任务 |
 | `GET /api/v2/retail/dashboard/operations` | 运营统计 |
 | `POST /api/v2/retail/exports` | 创建异步导出 |
 
 API 必须输出稳定错误码，不允许前端依赖中文错误消息判断逻辑。
 
-已实现的组织单元接口包括 `GET/POST /api/v2/retail/org-units` 和 `GET/PUT/PATCH/DELETE /api/v2/retail/org-units/{id}`；当 `retail.enabled=false` 时路由不注册。
+已实现组织、成员、任务扩展属性、清单定义和上述状态流转接口；当 `retail.enabled=false` 时零售路由不注册。通用 `PUT/PATCH` 无法直接篡改业务状态。
 
 ## 6. 权限实现
 

@@ -75,6 +75,11 @@ func GetTables() []interface{} {
 		&RetailOrgUnit{},
 		&RetailMembership{},
 		&RetailTaskProfile{},
+		&RetailChecklistItem{},
+		&RetailSubmission{},
+		&RetailSubmissionFile{},
+		&RetailReview{},
+		&RetailTaskTransition{},
 	}
 }
 

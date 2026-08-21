@@ -136,6 +136,9 @@ func (r *RetailTaskProfile) validate(s *xorm.Session) (*Task, *RetailOrgUnit, er
 		}
 	}
 	if r.ReviewerID > 0 {
+		if r.ReviewerID == r.PrimaryAssigneeID {
+			return nil, nil, ErrRetailTaskInvalidStaff{OrgUnitID: r.OrgUnitID, UserID: r.ReviewerID, Role: "reviewer"}
+		}
 		canAdmin, adminErr := (&RetailOrgUnit{ID: r.OrgUnitID}).hasInheritedAdminAccess(s, &user.User{ID: r.ReviewerID})
 		if adminErr != nil {
 			return nil, nil, adminErr
@@ -286,6 +289,20 @@ func (r *RetailTaskProfile) Update(s *xorm.Session, a web.Auth) error {
 }
 
 func (r *RetailTaskProfile) Delete(s *xorm.Session, _ web.Auth) error {
+	submissionIDs := []int64{}
+	if err := s.Table("retail_submissions").Cols("id").Where("profile_id = ?", r.ID).Find(&submissionIDs); err != nil {
+		return err
+	}
+	if len(submissionIDs) > 0 {
+		if _, err := s.In("submission_id", submissionIDs).Delete(&RetailSubmissionFile{}); err != nil {
+			return err
+		}
+	}
+	for _, model := range []interface{}{&RetailReview{}, &RetailSubmission{}, &RetailTaskTransition{}, &RetailChecklistItem{}} {
+		if _, err := s.Where("profile_id = ?", r.ID).Delete(model); err != nil {
+			return err
+		}
+	}
 	_, err := s.ID(r.ID).Delete(&RetailTaskProfile{})
 	return err
 }
