@@ -5,6 +5,13 @@ on:
   push:
     branches:
       - main
+    paths:
+      - .github/workflows/retail-image.yml
+      - Dockerfile
+      - go.mod
+      - go.sum
+      - pkg/**
+      - frontend/**
 
 concurrency:
   group: retail-image-${{ github.ref }}

@@ -46,16 +46,15 @@ docker compose ps
 
 首次启动会从 GHCR 下载已由 GitHub Actions 构建的应用镜像。这样可避免低配置生产机在本地编译时耗尽内存。服务启动时会自动执行向前数据库迁移。
 
-## 3. 创建首个管理员
+## 3. 创建首个组织负责人
 
 不要把密码写进命令历史；让 CLI 交互读取。
 
 ```sh
 docker compose run --rm app user create --username admin --email admin@example.com
-docker compose run --rm app user set-admin admin --admin
 ```
 
-登录 `.env` 中的 `PUBLIC_URL`。左侧菜单出现“零售任务”，说明零售模块已启用。
+本零售模块使用独立的组织权限，不要求 Vikunja 商业版的实例管理员功能。该账号首次创建公司组织时会自动成为公司及下级组织管理员。登录 `.env` 中的 `PUBLIC_URL`，左侧菜单出现“零售任务”，说明零售模块已启用。
 
 ## 4. 初始化业务数据
 
