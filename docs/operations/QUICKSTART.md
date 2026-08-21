@@ -29,6 +29,8 @@ SITE_ADDRESS=http://101.132.17.166
 PUBLIC_URL=http://101.132.17.166/
 SOURCE_CODE_URL=https://github.com/zhumengqiang520-afk/my-daiban
 APP_IMAGE=ghcr.io/zhumengqiang520-afk/my-daiban
+POSTGRES_IMAGE=ghcr.io/zhumengqiang520-afk/my-daiban:postgres-16.14-alpine3.22
+CADDY_IMAGE=ghcr.io/zhumengqiang520-afk/my-daiban:caddy-2.11.4-alpine
 IMAGE_TAG=latest
 ```
 
