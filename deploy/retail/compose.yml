@@ -63,6 +63,8 @@ services:
     environment:
       SITE_ADDRESS: ${SITE_ADDRESS:?set SITE_ADDRESS in .env}
       SOURCE_CODE_URL: ${SOURCE_CODE_URL:?set SOURCE_CODE_URL in .env}
+      TLS_CERT_FILE: ${TLS_CERT_FILE:-}
+      TLS_KEY_FILE: ${TLS_KEY_FILE:-}
     ports:
       - "80:80"
       - "443:443"

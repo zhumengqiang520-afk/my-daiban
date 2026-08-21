@@ -2,7 +2,7 @@
 
 本指南对应 `deploy/retail` 中的单机生产试点方案：Caddy、Vikunja 零售扩展、PostgreSQL 16 和本地持久化附件。有域名时 Caddy 自动配置 HTTPS；无域名时可先通过公网 IP 的 HTTP 方式试运行。正式大规模上线可将 PostgreSQL 和附件分别替换为托管数据库与 S3 对象存储。
 
-当前阿里云试点实例已部署在 `https://zmq.jonermec.icu/`，服务器目录为 `/opt/my-daiban`。生产密钥和账号密码仅保存在部署环境，不写入 Git 仓库。
+当前阿里云试点实例部署在 `https://101.132.17.166/`，使用 Let's Encrypt 公网 IP 证书；服务器目录为 `/opt/my-daiban`。`zmq.jonermec.icu` 已完成解析和域名证书签发，但中国大陆节点在 ICP 备案通过前会拦截域名访问。生产密钥和账号密码仅保存在部署环境，不写入 Git 仓库。
 
 ## 1. 上线前准备
 
@@ -37,7 +37,7 @@ CERTBOT_IMAGE=ghcr.io/zhumengqiang520-afk/my-daiban:certbot-5.4.0
 IMAGE_TAG=latest
 ```
 
-无域名时先以 HTTP 启动，并执行 `./scripts/issue-ip-certificate.sh`。证书签发成功后将 `.env` 改为：
+无域名时先以 HTTP 启动，并执行 `./scripts/issue-ip-certificate.sh`。如果 `.env` 中暂时保留的是待备案域名，可显式执行 `./scripts/issue-ip-certificate.sh 101.132.17.166`。证书签发成功后将 `.env` 改为：
 
 ```dotenv
 CADDYFILE=./Caddyfile.ip-https

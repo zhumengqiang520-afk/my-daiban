@@ -53,9 +53,10 @@
 
 | 项目 | 实际结果 |
 |---|---|
-| 正式访问地址 | `https://zmq.jonermec.icu/`，HTTP 自动 308 跳转 HTTPS |
+| 当前访问地址 | `https://101.132.17.166/`，HTTP 自动跳转 HTTPS，外网验证通过 |
 | DNS | `zmq.jonermec.icu` A 记录指向 `101.132.17.166`，权威及公共解析验证通过 |
-| HTTPS | Let's Encrypt 证书签发成功，证书 SAN 为 `zmq.jonermec.icu`，由 Caddy 自动续期 |
+| HTTPS | Let's Encrypt 公网 IP 证书签发成功，SAN 为 `IP Address:101.132.17.166`；每天 03:15 检查续期并重新加载 Caddy |
+| 域名状态 | 域名证书已签发，但阿里云中国大陆节点在 ICP 备案通过前返回 `Non-compliance ICP Filing`；备案后切回域名入口 |
 | 容器 | PostgreSQL、应用、Caddy 均运行；数据库和应用健康检查通过 |
 | 业务探针 | `/api/v2/health` 返回 `status=OK`；`/api/v1/info` 返回 `retail_enabled=true` |
 | 初始化数据 | 已创建公司、区域、试点门店、仓库、项目、5 个床品零售任务模板和 1 条样例任务 |

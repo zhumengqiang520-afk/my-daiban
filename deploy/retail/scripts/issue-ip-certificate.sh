@@ -9,11 +9,20 @@ set -a
 . "$DEPLOY_DIR/.env"
 set +a
 
-case "$SITE_ADDRESS" in
-	http://*) IP_ADDRESS=${SITE_ADDRESS#http://} ;;
-	https://*) IP_ADDRESS=${SITE_ADDRESS#https://} ;;
-	*) IP_ADDRESS=$SITE_ADDRESS ;;
-esac
+if [ "$#" -gt 1 ]; then
+	printf '%s\n' "Usage: $0 [public-ipv4]" >&2
+	exit 2
+fi
+
+if [ "$#" -eq 1 ]; then
+	IP_ADDRESS=$1
+else
+	case "$SITE_ADDRESS" in
+		http://*) IP_ADDRESS=${SITE_ADDRESS#http://} ;;
+		https://*) IP_ADDRESS=${SITE_ADDRESS#https://} ;;
+		*) IP_ADDRESS=$SITE_ADDRESS ;;
+	esac
+fi
 
 case "$IP_ADDRESS" in
 	*[!0-9.]*|'')

@@ -1,3 +1,7 @@
+{
+	default_sni {$SITE_ADDRESS}
+}
+
 http://{$SITE_ADDRESS} {
 	handle /.well-known/acme-challenge/* {
 		root * /var/www/certbot

@@ -1,0 +1,4 @@
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+15 3 * * * root cd /opt/my-daiban && ./scripts/renew-ip-certificate.sh >> /var/log/my-daiban-cert-renew.log 2>&1
