@@ -80,6 +80,10 @@ func GetTables() []interface{} {
 		&RetailSubmissionFile{},
 		&RetailReview{},
 		&RetailTaskTransition{},
+		&RetailTaskTemplate{},
+		&RetailTemplateVersion{},
+		&RetailTemplateDispatch{},
+		&RetailStaffCapacity{},
 	}
 }
 

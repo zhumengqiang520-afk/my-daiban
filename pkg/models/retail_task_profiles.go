@@ -111,10 +111,7 @@ func (r *RetailTaskProfile) validate(s *xorm.Session) (*Task, *RetailOrgUnit, er
 	if !org.Active {
 		return nil, nil, ErrInvalidData{Message: "The retail organization unit is inactive."}
 	}
-	switch r.Category {
-	case RetailTaskCategoryOpening, RetailTaskCategoryClosing, RetailTaskCategoryDisplay, RetailTaskCategoryInventory,
-		RetailTaskCategoryCustomerFollowup, RetailTaskCategoryDelivery, RetailTaskCategoryAfterSales, RetailTaskCategoryOther:
-	default:
+	if !validRetailTaskCategory(r.Category) {
 		return nil, nil, ErrRetailTaskInvalidCategory{Category: r.Category}
 	}
 	if r.Source == "" {

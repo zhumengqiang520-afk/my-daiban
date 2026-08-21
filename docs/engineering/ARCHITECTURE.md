@@ -40,6 +40,7 @@ PostgreSQL  对象存储   通知适配器
 - `retail_staff_capacity`：每日可分配容量和变更原因。
 - `retail_task_profiles`：任务对应的门店、类别、主负责人、复核人、预计工时、来源和策略。
 - `retail_task_templates` / `retail_template_versions`：模板及不可变版本。
+- `retail_template_dispatches`：模板版本、目标组织、计划时间与幂等键对应的生成记录。
 - `retail_checklist_items`：验收清单及完成状态。
 - `retail_submissions` / `retail_submission_files`：每次完成提交及凭证。
 - `retail_reviews`：通过、驳回和意见。
@@ -89,6 +90,8 @@ draft / assigned / in_progress -> cancelled
 | `POST /api/v2/retail/templates` | 创建任务模板 |
 | `POST /api/v2/retail/templates/{id}/dispatch-preview` | 预览批量派发 |
 | `POST /api/v2/retail/templates/{id}/dispatch` | 幂等派发 |
+| `GET /api/v2/retail/staff/workload` | 按组织和日期查询人员容量与已分配分钟数 |
+| `PUT /api/v2/retail/staff/{id}/capacity` | 设置个人单日容量覆盖 |
 | `POST /api/v2/retail/tasks/{id}/start` | 开始任务 |
 | `GET /api/v2/retail/tasks/{id}/workflow` | 读取清单、提交、复核及流转历史 |
 | `PUT /api/v2/retail/checklist-items/{id}/completion` | 勾选或取消清单项 |

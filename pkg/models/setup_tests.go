@@ -87,6 +87,10 @@ func SetupTests() {
 		"retail_submission_files",
 		"retail_reviews",
 		"retail_task_transitions",
+		"retail_task_templates",
+		"retail_template_versions",
+		"retail_template_dispatches",
+		"retail_staff_capacities",
 		"notifications",
 	)
 	if err != nil {

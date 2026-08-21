@@ -237,6 +237,16 @@ func (r *RetailOrgUnit) Delete(s *xorm.Session, a web.Auth) error {
 	if hasTasks {
 		return ErrRetailOrgUnitHasTasks{ID: r.ID}
 	}
+	hasTemplates, err := s.Where("org_unit_id = ?", r.ID).Exist(&RetailTaskTemplate{})
+	if err != nil {
+		return err
+	}
+	if hasTemplates {
+		return ErrRetailOrgUnitHasTemplates{ID: r.ID}
+	}
+	if _, err = s.Where("org_unit_id = ?", r.ID).Delete(&RetailStaffCapacity{}); err != nil {
+		return err
+	}
 	if _, err = s.Where("org_unit_id = ?", r.ID).Delete(&RetailMembership{}); err != nil {
 		return err
 	}

@@ -21,12 +21,23 @@ const (
 	ErrCodeRetailOrgUnitInvalidParent = 20003
 	ErrCodeRetailOrgUnitHasChildren   = 20004
 	ErrCodeRetailOrgUnitHasTasks      = 20005
+	ErrCodeRetailOrgUnitHasTemplates  = 20006
 )
 
 type ErrRetailOrgUnitDoesNotExist struct{ ID int64 }
 
 func (err ErrRetailOrgUnitDoesNotExist) Error() string {
 	return fmt.Sprintf("retail organization unit does not exist [id: %d]", err.ID)
+}
+
+type ErrRetailOrgUnitHasTemplates struct{ ID int64 }
+
+func (err ErrRetailOrgUnitHasTemplates) Error() string {
+	return fmt.Sprintf("retail organization unit has task templates [id: %d]", err.ID)
+}
+
+func (err ErrRetailOrgUnitHasTemplates) HTTPError() web.HTTPError {
+	return web.HTTPError{HTTPCode: http.StatusConflict, Code: ErrCodeRetailOrgUnitHasTemplates, Message: "Move or archive retained task templates before deleting this organization unit."}
 }
 
 func (err ErrRetailOrgUnitDoesNotExist) HTTPError() web.HTTPError {
