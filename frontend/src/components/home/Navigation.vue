@@ -30,6 +30,14 @@
 						{{ $t('navigation.overview') }}
 					</RouterLink>
 				</li>
+				<li v-if="configStore.retailEnabled">
+					<RouterLink :to="{name: 'retail.operations'}">
+						<span class="menu-item-icon icon">
+							<Icon icon="sitemap" />
+						</span>
+						零售任务
+					</RouterLink>
+				</li>
 				<li>
 					<RouterLink
 						v-shortcut="'KeyG KeyU'"

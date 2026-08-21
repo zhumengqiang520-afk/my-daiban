@@ -56,6 +56,7 @@ type VikunjaInfos struct {
 	EnabledProFeatures         []license.Feature `json:"enabled_pro_features" doc:"The licensed pro features enabled on this instance."`
 	// ConcurrentWrites reports whether the configured database can handle concurrent writes. It is false on SQLite, where overlapping write transactions deadlock, so clients should serialize batched writes instead of firing them in parallel.
 	ConcurrentWrites bool `json:"concurrent_writes" doc:"Whether the configured database supports concurrent writes. False on SQLite; clients should serialize batched writes when this is false."`
+	RetailEnabled    bool `json:"retail_enabled" doc:"Whether the retail operations module is enabled."`
 }
 
 // AuthInfo describes the authentication methods enabled on this instance.
@@ -109,6 +110,7 @@ func BuildInfo() VikunjaInfos {
 		PublicTeamsEnabled:     config.ServiceEnablePublicTeams.GetBool(),
 		AllowIconChanges:       config.ServiceAllowIconChanges.GetBool(),
 		ConcurrentWrites:       config.DatabaseType.GetString() != "sqlite",
+		RetailEnabled:          config.RetailEnabled.GetBool(),
 		EnabledProFeatures:     license.EnabledProFeatures(),
 		AvailableMigrators: []string{
 			(&vikunja_file.FileMigrator{}).Name(),

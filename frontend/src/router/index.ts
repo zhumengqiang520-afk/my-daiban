@@ -48,6 +48,11 @@ const router = createRouter({
 			component: () => import('@/views/Home.vue'),
 		},
 		{
+			path: '/retail',
+			name: 'retail.operations',
+			component: () => import('@/views/retail/RetailOperations.vue'),
+		},
+		{
 			path: '/:pathMatch(.*)*',
 			name: 'not-found',
 			component: NotFoundComponent,
