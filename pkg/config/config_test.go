@@ -126,3 +126,21 @@ func TestResolvePath(t *testing.T) {
 		})
 	}
 }
+
+func TestRetailDefaults(t *testing.T) {
+	viper.Reset()
+	t.Cleanup(viper.Reset)
+	InitDefaultConfig()
+
+	assert.False(t, RetailEnabled.GetBool())
+	assert.Equal(t, 480, RetailDefaultDailyCapacityMinutes.GetInt())
+	assert.Equal(t, 80, RetailOverloadWarningPercent.GetInt())
+}
+
+func TestRetailConfigFromYAML(t *testing.T) {
+	initConfigFromYAML(t, "retail:\n  enabled: true\n  defaultdailycapacityminutes: 420\n  overloadwarningpercent: 90\n")
+
+	assert.True(t, RetailEnabled.GetBool())
+	assert.Equal(t, 420, RetailDefaultDailyCapacityMinutes.GetInt())
+	assert.Equal(t, 90, RetailOverloadWarningPercent.GetInt())
+}

@@ -239,6 +239,10 @@ const (
 	PluginsDir     Key = `plugins.dir`
 	PluginsLoader  Key = `plugins.loader`
 
+	RetailEnabled                     Key = `retail.enabled`
+	RetailDefaultDailyCapacityMinutes Key = `retail.defaultdailycapacityminutes`
+	RetailOverloadWarningPercent      Key = `retail.overloadwarningpercent`
+
 	// LicenseKey gates optional paid features and funds Vikunja's development.
 	// See the package comment in pkg/license/license.go before removing.
 	LicenseKey Key = `license.key`
@@ -503,6 +507,11 @@ func initDefaultConfig() {
 	PluginsEnabled.setDefault(false)
 	PluginsDir.setDefault(ResolvePath("plugins"))
 	PluginsLoader.setDefault("native")
+	// Retail operations are opt-in so upstream-compatible deployments keep
+	// their existing behavior until the organization model is configured.
+	RetailEnabled.setDefault(false)
+	RetailDefaultDailyCapacityMinutes.setDefault(480)
+	RetailOverloadWarningPercent.setDefault(80)
 
 	// Migrate deprecated webhook config keys to outgoingrequests.*
 	// This allows removing the old keys in a single place later.

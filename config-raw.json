@@ -1094,6 +1094,27 @@
             ]
         },
         {
+            "key": "retail",
+            "comment": "Retail operations extension settings. The extension remains disabled until the organization structure and permissions have been configured.",
+            "children": [
+                {
+                    "key": "enabled",
+                    "default_value": "false",
+                    "comment": "Whether to enable the retail organization, workload and task execution extensions."
+                },
+                {
+                    "key": "defaultdailycapacityminutes",
+                    "default_value": "480",
+                    "comment": "Default number of task minutes available to a retail staff member per working day. This is workload planning capacity, not attendance data."
+                },
+                {
+                    "key": "overloadwarningpercent",
+                    "default_value": "80",
+                    "comment": "Percentage of daily capacity at which the workload board starts warning the assigning manager. Values over 100 represent over-allocation."
+                }
+            ]
+        },
+        {
             "key": "license",
             "children": [
                 {

@@ -1,0 +1,63 @@
+name: 功能需求
+description: 提交可验收的业务需求
+title: "[Feature] "
+labels:
+  - "type:feature"
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: 业务问题
+      description: 描述当前怎么做、谁受到影响、多久发生一次。不要只写想要的按钮。
+    validations:
+      required: true
+  - type: textarea
+    id: scenario
+    attributes:
+      label: 真实场景
+      description: 使用匿名或脱敏样例，不要填写顾客手机号、订单隐私或生产密码。
+    validations:
+      required: true
+  - type: dropdown
+    id: role
+    attributes:
+      label: 主要用户
+      options:
+        - 店员
+        - 店长
+        - 区域经理
+        - 总部运营
+        - 仓库或售后
+        - 系统管理员
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: 数据范围与权限
+      description: 谁可以看、创建、修改、复核或导出？
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 验收条件
+      description: 使用“当……时，系统应……”列出可测试结果。
+    validations:
+      required: true
+  - type: textarea
+    id: exclusions
+    attributes:
+      label: 本次不包含
+      description: 明确边界，避免需求持续扩大。
+  - type: dropdown
+    id: urgency
+    attributes:
+      label: 业务紧迫度
+      options:
+        - P2 常规需求
+        - P1 影响关键流程
+        - P0 阻止门店运营或上线
+        - P3 建议或优化
+    validations:
+      required: true
