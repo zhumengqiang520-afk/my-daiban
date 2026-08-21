@@ -208,11 +208,19 @@ func (r *RetailTaskTemplate) Update(s *xorm.Session, a web.Auth) error {
 	if err = createRetailTemplateVersion(s, r, a.GetID()); err != nil {
 		return err
 	}
+	if !r.Active {
+		if _, err = s.Where("template_id = ?", r.ID).Cols("active").Update(&RetailTemplateSchedule{Active: false}); err != nil {
+			return err
+		}
+	}
 	return r.ReadOne(s, a)
 }
 
 func (r *RetailTaskTemplate) Delete(s *xorm.Session, _ web.Auth) error {
-	_, err := s.ID(r.ID).Cols("active").Update(&RetailTaskTemplate{Active: false})
+	if _, err := s.ID(r.ID).Cols("active").Update(&RetailTaskTemplate{Active: false}); err != nil {
+		return err
+	}
+	_, err := s.Where("template_id = ?", r.ID).Cols("active").Update(&RetailTemplateSchedule{Active: false})
 	return err
 }
 

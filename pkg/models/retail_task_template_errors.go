@@ -16,15 +16,26 @@ import (
 )
 
 const (
-	ErrCodeRetailTaskTemplateDoesNotExist    = 20037
-	ErrCodeRetailTaskTemplateInactive        = 20038
-	ErrCodeRetailTemplateVersionDoesNotExist = 20039
+	ErrCodeRetailTaskTemplateDoesNotExist     = 20037
+	ErrCodeRetailTaskTemplateInactive         = 20038
+	ErrCodeRetailTemplateVersionDoesNotExist  = 20039
+	ErrCodeRetailTemplateScheduleDoesNotExist = 20040
 )
 
 type ErrRetailTaskTemplateDoesNotExist struct{ ID int64 }
 
 func (err ErrRetailTaskTemplateDoesNotExist) Error() string {
 	return fmt.Sprintf("retail task template does not exist [id: %d]", err.ID)
+}
+
+type ErrRetailTemplateScheduleDoesNotExist struct{ ID int64 }
+
+func (err ErrRetailTemplateScheduleDoesNotExist) Error() string {
+	return fmt.Sprintf("retail template schedule does not exist [id: %d]", err.ID)
+}
+
+func (err ErrRetailTemplateScheduleDoesNotExist) HTTPError() web.HTTPError {
+	return web.HTTPError{HTTPCode: http.StatusNotFound, Code: ErrCodeRetailTemplateScheduleDoesNotExist, Message: "This retail template schedule does not exist."}
 }
 
 func (err ErrRetailTaskTemplateDoesNotExist) HTTPError() web.HTTPError {

@@ -91,6 +91,8 @@ func SetupTests() {
 		"retail_template_versions",
 		"retail_template_dispatches",
 		"retail_staff_capacities",
+		"retail_template_schedules",
+		"retail_notification_deliveries",
 		"notifications",
 	)
 	if err != nil {

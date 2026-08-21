@@ -84,6 +84,8 @@ func GetTables() []interface{} {
 		&RetailTemplateVersion{},
 		&RetailTemplateDispatch{},
 		&RetailStaffCapacity{},
+		&RetailTemplateSchedule{},
+		&RetailNotificationDelivery{},
 	}
 }
 

@@ -41,11 +41,12 @@ PostgreSQL  对象存储   通知适配器
 - `retail_task_profiles`：任务对应的门店、类别、主负责人、复核人、预计工时、来源和策略。
 - `retail_task_templates` / `retail_template_versions`：模板及不可变版本。
 - `retail_template_dispatches`：模板版本、目标组织、计划时间与幂等键对应的生成记录。
+- `retail_template_schedules`：日/周/月重复计划、下次执行时间、月末锚点及停用状态。
 - `retail_checklist_items`：验收清单及完成状态。
 - `retail_submissions` / `retail_submission_files`：每次完成提交及凭证。
 - `retail_reviews`：通过、驳回和意见。
 - `retail_task_transitions`：独立于通用审计的零售任务业务状态流转历史。
-- `retail_escalation_policies` / `retail_notification_deliveries`：升级规则和发送幂等。
+- `retail_notification_deliveries`：责任人、店长和上级管理员的发送幂等记录；MVP 使用 0/30/120 分钟默认升级阈值。
 - 任务提交和复核历史保存在对应业务表；通用审计复用获得许可的 Vikunja 审计能力。
 
 表名仅为设计名，实施前根据上游迁移和命名规范调整。
@@ -92,6 +93,8 @@ draft / assigned / in_progress -> cancelled
 | `POST /api/v2/retail/templates/{id}/dispatch` | 幂等派发 |
 | `GET /api/v2/retail/staff/workload` | 按组织和日期查询人员容量与已分配分钟数 |
 | `PUT /api/v2/retail/staff/{id}/capacity` | 设置个人单日容量覆盖 |
+| `GET/POST /api/v2/retail/template-schedules` | 查询或新建自动派发计划 |
+| `GET/PUT/PATCH/DELETE /api/v2/retail/template-schedules/{id}` | 管理日/周/月派发计划 |
 | `POST /api/v2/retail/tasks/{id}/start` | 开始任务 |
 | `GET /api/v2/retail/tasks/{id}/workflow` | 读取清单、提交、复核及流转历史 |
 | `PUT /api/v2/retail/checklist-items/{id}/completion` | 勾选或取消清单项 |

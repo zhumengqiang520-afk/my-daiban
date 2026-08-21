@@ -176,6 +176,7 @@ func TestNotificationScopeClassification(t *testing.T) {
 	accountScoped := []string{
 		"api_token.expiring.day",
 		"api_token.expiring.week",
+		"retail.task.escalation",
 		"team.member.added",
 	}
 

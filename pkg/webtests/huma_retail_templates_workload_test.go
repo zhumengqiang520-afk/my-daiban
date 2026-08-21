@@ -57,6 +57,22 @@ func TestHumaRetailTemplatesAndWorkload(t *testing.T) {
 	require.NoError(t, json.Unmarshal(templateRec.Body.Bytes(), &template))
 	assert.Equal(t, 1, template.CurrentVersion)
 
+	scheduleHandler := webHandlerTestV2{user: &testuser1, basePath: "/api/v2/retail/template-schedules", idParam: "id", t: t, e: e}
+	outsiderScheduleHandler := webHandlerTestV2{user: &testuser10, basePath: scheduleHandler.basePath, idParam: "id", t: t, e: e}
+	schedulePayload := fmt.Sprintf(`{"template_id":%d,"target_org_unit_id":%d,"project_id":1,"primary_assignee_id":2,"reviewer_id":1,"frequency":"daily","interval":1,"due_offset_minutes":120,"next_run_at":"2026-08-23T08:00:00+08:00","active":true}`, template.ID, company.ID)
+	_, err = outsiderScheduleHandler.testCreateWithUser(nil, nil, schedulePayload)
+	require.Error(t, err)
+	assert.Equal(t, http.StatusForbidden, getHTTPErrorCode(err))
+	scheduleRec, err := scheduleHandler.testCreateWithUser(nil, nil, schedulePayload)
+	require.NoError(t, err)
+	var schedule models.RetailTemplateSchedule
+	require.NoError(t, json.Unmarshal(scheduleRec.Body.Bytes(), &schedule))
+	assert.Equal(t, models.RetailScheduleDaily, schedule.Frequency)
+	staffScheduleHandler := webHandlerTestV2{user: &testuser2, basePath: scheduleHandler.basePath, idParam: "id", t: t, e: e}
+	readSchedule, err := staffScheduleHandler.testReadOneWithUser(nil, map[string]string{"id": fmt.Sprint(schedule.ID)})
+	require.NoError(t, err)
+	assert.Contains(t, readSchedule.Body.String(), `"max_permission":0`)
+
 	ownerToken := humaTokenFor(t, &testuser1)
 	staffToken := humaTokenFor(t, &testuser2)
 	dispatchBody := fmt.Sprintf(`{"targets":[{"target_org_unit_id":%d,"project_id":1,"primary_assignee_id":2,"reviewer_id":1,"scheduled_for":"2026-08-22T08:00:00+08:00","due_date":"2026-08-22T10:00:00+08:00"}]}`, company.ID)
@@ -104,4 +120,11 @@ func TestHumaRetailTemplatesAndWorkload(t *testing.T) {
 		}
 	}
 	assert.True(t, found)
+
+	rec = humaRequest(t, e, http.MethodGet, fmt.Sprintf("/api/v2/retail/dashboard/operations?org_unit_id=%d&date_from=2026-08-22&date_to=2026-08-22", company.ID), "", ownerToken, "")
+	require.Equal(t, http.StatusOK, rec.Code, rec.Body.String())
+	var dashboard models.RetailOperationsDashboard
+	require.NoError(t, json.Unmarshal(rec.Body.Bytes(), &dashboard))
+	assert.Equal(t, 1, dashboard.Total)
+	assert.Equal(t, 0, dashboard.Completed)
 }

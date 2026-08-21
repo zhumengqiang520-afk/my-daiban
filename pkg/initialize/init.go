@@ -148,6 +148,8 @@ func FullInit() {
 	openid.RegisterProviderAvailabilityCron()
 	models.RegisterAPITokenExpiryCheckCron()
 	models.RegisterRetailMembershipExpiryCron()
+	models.RegisterRetailTemplateScheduleCron()
+	models.RegisterRetailEscalationCron()
 
 	// Initialize WebSocket hub
 	ws.InitHub()
