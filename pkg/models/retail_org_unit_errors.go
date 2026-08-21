@@ -20,6 +20,7 @@ const (
 	ErrCodeRetailOrgUnitInvalidType   = 20002
 	ErrCodeRetailOrgUnitInvalidParent = 20003
 	ErrCodeRetailOrgUnitHasChildren   = 20004
+	ErrCodeRetailOrgUnitHasTasks      = 20005
 )
 
 type ErrRetailOrgUnitDoesNotExist struct{ ID int64 }
@@ -63,4 +64,14 @@ func (err ErrRetailOrgUnitHasChildren) Error() string {
 
 func (err ErrRetailOrgUnitHasChildren) HTTPError() web.HTTPError {
 	return web.HTTPError{HTTPCode: http.StatusConflict, Code: ErrCodeRetailOrgUnitHasChildren, Message: "Remove or move child organization units before deleting this one."}
+}
+
+type ErrRetailOrgUnitHasTasks struct{ ID int64 }
+
+func (err ErrRetailOrgUnitHasTasks) Error() string {
+	return fmt.Sprintf("retail organization unit has tasks [id: %d]", err.ID)
+}
+
+func (err ErrRetailOrgUnitHasTasks) HTTPError() web.HTTPError {
+	return web.HTTPError{HTTPCode: http.StatusConflict, Code: ErrCodeRetailOrgUnitHasTasks, Message: "Remove or reassign retail task profiles before deleting this organization unit."}
 }

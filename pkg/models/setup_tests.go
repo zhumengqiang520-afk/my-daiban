@@ -81,6 +81,7 @@ func SetupTests() {
 		"oauth_codes",
 		"retail_org_units",
 		"retail_memberships",
+		"retail_task_profiles",
 		"notifications",
 	)
 	if err != nil {

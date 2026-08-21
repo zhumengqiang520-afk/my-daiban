@@ -230,6 +230,13 @@ func (r *RetailOrgUnit) Delete(s *xorm.Session, a web.Auth) error {
 	if hasChildren {
 		return ErrRetailOrgUnitHasChildren{ID: r.ID}
 	}
+	hasTasks, err := s.Where("org_unit_id = ?", r.ID).Exist(&RetailTaskProfile{})
+	if err != nil {
+		return err
+	}
+	if hasTasks {
+		return ErrRetailOrgUnitHasTasks{ID: r.ID}
+	}
 	if _, err = s.Where("org_unit_id = ?", r.ID).Delete(&RetailMembership{}); err != nil {
 		return err
 	}

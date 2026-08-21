@@ -81,6 +81,8 @@ draft / assigned / in_progress -> cancelled
 | `POST /api/v2/retail/org-units` | 创建组织单元 |
 | `GET/POST /api/v2/retail/memberships` | 查询或新增人员归属 |
 | `GET/PUT/PATCH/DELETE /api/v2/retail/memberships/{id}` | 管理岗位、主管、借调和作用域权限 |
+| `GET/POST /api/v2/retail/task-profiles` | 查询或绑定零售任务属性 |
+| `GET/PUT/PATCH/DELETE /api/v2/retail/task-profiles/{id}` | 管理任务组织、类别、人员、工时和凭证策略 |
 | `GET /api/v2/retail/staff/workload` | 查询日期范围内的人员负荷 |
 | `PUT /api/v2/retail/staff/{id}/capacity` | 调整人员容量 |
 | `POST /api/v2/retail/templates` | 创建任务模板 |
