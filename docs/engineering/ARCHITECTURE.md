@@ -34,8 +34,9 @@ PostgreSQL  对象存储   通知适配器
 
 ### 零售扩展
 
-- `retail_org_units`：公司、区域、门店、仓库。
-- `retail_memberships`：用户在组织作用域内的岗位和角色。
+- `retail_org_units`：公司、区域、门店、仓库；每个单元绑定一个上游 Vikunja Team。
+- 上游 `team_members`：作为组织成员与管理员权限的单一真实来源，区域/公司权限向下继承。
+- `retail_memberships`（后续阶段）：只补充岗位、直属负责人、临时借调及有效期，不重复保存基础团队成员权限。
 - `retail_staff_capacity`：每日可分配容量和变更原因。
 - `retail_task_profiles`：任务对应的门店、类别、主负责人、复核人、预计工时、来源和策略。
 - `retail_task_templates` / `retail_template_versions`：模板及不可变版本。
@@ -90,6 +91,8 @@ draft / assigned / in_progress -> cancelled
 | `POST /api/v2/retail/exports` | 创建异步导出 |
 
 API 必须输出稳定错误码，不允许前端依赖中文错误消息判断逻辑。
+
+已实现的组织单元接口包括 `GET/POST /api/v2/retail/org-units` 和 `GET/PUT/PATCH/DELETE /api/v2/retail/org-units/{id}`；当 `retail.enabled=false` 时路由不注册。
 
 ## 6. 权限实现
 

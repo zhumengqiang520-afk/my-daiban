@@ -33,12 +33,24 @@ func (t *Team) CanCreate(_ *xorm.Session, a web.Auth) (bool, error) {
 
 // CanUpdate checks if the user can update a team
 func (t *Team) CanUpdate(s *xorm.Session, a web.Auth) (bool, error) {
+	managed, err := t.isManagedByRetailOrg(s)
+	if err != nil || managed {
+		return false, err
+	}
 	return t.IsAdmin(s, a)
 }
 
 // CanDelete checks if a user can delete a team
 func (t *Team) CanDelete(s *xorm.Session, a web.Auth) (bool, error) {
+	managed, err := t.isManagedByRetailOrg(s)
+	if err != nil || managed {
+		return false, err
+	}
 	return t.IsAdmin(s, a)
+}
+
+func (t *Team) isManagedByRetailOrg(s *xorm.Session) (bool, error) {
+	return s.Where("team_id = ?", t.ID).Exist(&RetailOrgUnit{})
 }
 
 // IsAdmin returns true when the user is admin of a team
