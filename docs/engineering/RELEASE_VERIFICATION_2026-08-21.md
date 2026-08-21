@@ -47,3 +47,20 @@
 3. 在预发布按 [UAT_AND_GO_LIVE.md](../operations/UAT_AND_GO_LIVE.md) 完成真实角色、手机浏览器和跨门店越权验收。
 4. 记录正式镜像摘要、数据库备份、告警接收人和业务/技术/运维签字。
 
+## 阿里云试点部署补充（2026-08-21）
+
+上述真实环境门禁已在阿里云单机试点上继续验证，当前结果如下：
+
+| 项目 | 实际结果 |
+|---|---|
+| 正式访问地址 | `https://zmq.jonermec.icu/`，HTTP 自动 308 跳转 HTTPS |
+| DNS | `zmq.jonermec.icu` A 记录指向 `101.132.17.166`，权威及公共解析验证通过 |
+| HTTPS | Let's Encrypt 证书签发成功，证书 SAN 为 `zmq.jonermec.icu`，由 Caddy 自动续期 |
+| 容器 | PostgreSQL、应用、Caddy 均运行；数据库和应用健康检查通过 |
+| 业务探针 | `/api/v2/health` 返回 `status=OK`；`/api/v1/info` 返回 `retail_enabled=true` |
+| 初始化数据 | 已创建公司、区域、试点门店、仓库、项目、5 个床品零售任务模板和 1 条样例任务 |
+| 备份 | 已生成 `retail-2026-08-21_14-46-04.zip`，SHA-256 为 `b74a8b7e088f27435db5cf8318422793ed28ff923bfff07c6962887fb0016c17`，并复制到异地主机 |
+| 自动备份 | 服务器每天 02:30 执行备份，日志写入 `/var/log/my-daiban-backup.log` |
+| 镜像流水线 | GitHub Actions 的应用构建和运行依赖镜像任务均通过 |
+
+仍需业务侧完成真实员工账号、手机端和跨门店权限 UAT，并指定告警接收人。当前 CentOS 8.2 已停止维护，试点可运行，但正式扩容前应迁移到受支持的操作系统；迁移时不得覆盖服务器上既有的 `my-robot` 数据。

@@ -2,6 +2,8 @@
 
 本指南对应 `deploy/retail` 中的单机生产试点方案：Caddy、Vikunja 零售扩展、PostgreSQL 16 和本地持久化附件。有域名时 Caddy 自动配置 HTTPS；无域名时可先通过公网 IP 的 HTTP 方式试运行。正式大规模上线可将 PostgreSQL 和附件分别替换为托管数据库与 S3 对象存储。
 
+当前阿里云试点实例已部署在 `https://zmq.jonermec.icu/`，服务器目录为 `/opt/my-daiban`。生产密钥和账号密码仅保存在部署环境，不写入 Git 仓库。
+
 ## 1. 上线前准备
 
 - 一台受支持的 Linux 主机。试点建议 4 vCPU、8 GB 内存、100 GB SSD；2 vCPU、2 GB 内存、40 GB SSD 可用于少量用户试运行，但应使用预构建镜像并配置至少 2 GB swap。
