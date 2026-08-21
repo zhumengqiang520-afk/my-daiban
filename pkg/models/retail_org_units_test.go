@@ -10,6 +10,7 @@ package models
 
 import (
 	"testing"
+	"time"
 
 	"code.vikunja.io/api/pkg/db"
 	"code.vikunja.io/api/pkg/user"
@@ -21,7 +22,9 @@ import (
 
 func insertRetailOrgFixture(t *testing.T, s *xorm.Session) {
 	t.Helper()
-	_, err := s.Where("id > ?", 0).Delete(&RetailOrgUnit{})
+	_, err := s.Where("id > ?", 0).Delete(&RetailMembership{})
+	require.NoError(t, err)
+	_, err = s.Where("id > ?", 0).Delete(&RetailOrgUnit{})
 	require.NoError(t, err)
 	units := []*RetailOrgUnit{
 		{ID: 1, Type: RetailOrgUnitCompany, Name: "Sleep Retail", Code: "COMP", TeamID: 1, Active: true, CreatedByID: 1},
@@ -29,6 +32,8 @@ func insertRetailOrgFixture(t *testing.T, s *xorm.Session) {
 		{ID: 3, ParentID: 2, Type: RetailOrgUnitStore, Name: "Shanghai Store", Code: "SH001", TeamID: 10, Active: true, CreatedByID: 1},
 	}
 	_, err = s.Insert(units)
+	require.NoError(t, err)
+	_, err = s.Insert(&RetailMembership{ID: 1, OrgUnitID: 1, UserID: 1, JobTitle: "Owner", IsPrimary: true, StartsAt: time.Now(), Active: true, CreatedByID: 1})
 	require.NoError(t, err)
 }
 

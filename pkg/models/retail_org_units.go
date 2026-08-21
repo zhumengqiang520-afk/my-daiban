@@ -118,6 +118,18 @@ func (r *RetailOrgUnit) Create(s *xorm.Session, a web.Auth) error {
 		r.Active = true
 	}
 	_, err = s.Insert(r)
+	if err != nil {
+		return err
+	}
+	_, err = s.Insert(&RetailMembership{
+		OrgUnitID:   r.ID,
+		UserID:      creator.ID,
+		JobTitle:    "Organization owner",
+		IsPrimary:   r.Type == RetailOrgUnitCompany,
+		StartsAt:    time.Now(),
+		Active:      true,
+		CreatedByID: creator.ID,
+	})
 	return err
 }
 
@@ -217,6 +229,9 @@ func (r *RetailOrgUnit) Delete(s *xorm.Session, a web.Auth) error {
 	}
 	if hasChildren {
 		return ErrRetailOrgUnitHasChildren{ID: r.ID}
+	}
+	if _, err = s.Where("org_unit_id = ?", r.ID).Delete(&RetailMembership{}); err != nil {
+		return err
 	}
 	if _, err = s.ID(r.ID).Delete(&RetailOrgUnit{}); err != nil {
 		return err

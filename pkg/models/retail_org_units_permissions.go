@@ -9,6 +9,8 @@
 package models
 
 import (
+	"time"
+
 	"code.vikunja.io/api/pkg/web"
 	"xorm.io/xorm"
 )
@@ -72,6 +74,21 @@ func (r *RetailOrgUnit) inheritedAccess(s *xorm.Session, a web.Auth) (bool, int,
 			return false, 0, err
 		}
 		if has {
+			membership := &RetailMembership{}
+			hasRetailProfile, profileErr := s.Where("org_unit_id = ?", current.ID).And("user_id = ?", a.GetID()).Get(membership)
+			if profileErr != nil {
+				return false, 0, profileErr
+			}
+			if hasRetailProfile && (!membership.Active || !membership.EndsAt.IsZero() && !membership.EndsAt.After(time.Now())) {
+				if current.ParentID == 0 {
+					break
+				}
+				current, err = GetRetailOrgUnitByID(s, current.ParentID)
+				if err != nil {
+					return false, 0, err
+				}
+				continue
+			}
 			if member.Admin {
 				return true, int(PermissionAdmin), nil
 			}

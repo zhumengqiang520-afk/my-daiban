@@ -24,11 +24,19 @@ import (
 
 // CanCreate checks if the user can add a new tem member
 func (tm *TeamMember) CanCreate(s *xorm.Session, a web.Auth) (bool, error) {
+	managed, err := tm.isManagedByRetailOrg(s)
+	if err != nil || managed {
+		return false, err
+	}
 	return tm.IsAdmin(s, a)
 }
 
 // CanDelete checks if the user can delete a new team member
 func (tm *TeamMember) CanDelete(s *xorm.Session, a web.Auth) (bool, error) {
+	managed, err := tm.isManagedByRetailOrg(s)
+	if err != nil || managed {
+		return false, err
+	}
 	// The self-removal shortcut below runs before IsAdmin, which holds the only
 	// other link share check in this file.
 	if _, is := a.(*LinkSharing); is {
@@ -47,7 +55,15 @@ func (tm *TeamMember) CanDelete(s *xorm.Session, a web.Auth) (bool, error) {
 
 // CanUpdate checks if the user can modify a team member's permission
 func (tm *TeamMember) CanUpdate(s *xorm.Session, a web.Auth) (bool, error) {
+	managed, err := tm.isManagedByRetailOrg(s)
+	if err != nil || managed {
+		return false, err
+	}
 	return tm.IsAdmin(s, a)
+}
+
+func (tm *TeamMember) isManagedByRetailOrg(s *xorm.Session) (bool, error) {
+	return s.Where("team_id = ?", tm.TeamID).Exist(&RetailOrgUnit{})
 }
 
 // IsAdmin checks if the user is team admin

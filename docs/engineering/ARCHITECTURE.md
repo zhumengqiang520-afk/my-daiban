@@ -36,7 +36,7 @@ PostgreSQL  对象存储   通知适配器
 
 - `retail_org_units`：公司、区域、门店、仓库；每个单元绑定一个上游 Vikunja Team。
 - 上游 `team_members`：作为组织成员与管理员权限的单一真实来源，区域/公司权限向下继承。
-- `retail_memberships`（后续阶段）：只补充岗位、直属负责人、临时借调及有效期，不重复保存基础团队成员权限。
+- `retail_memberships`：补充岗位、直属负责人、主归属、临时借调及有效期；管理权实时同步到 `team_members.admin`，不重复保存基础团队权限。
 - `retail_staff_capacity`：每日可分配容量和变更原因。
 - `retail_task_profiles`：任务对应的门店、类别、主负责人、复核人、预计工时、来源和策略。
 - `retail_task_templates` / `retail_template_versions`：模板及不可变版本。
@@ -79,6 +79,8 @@ draft / assigned / in_progress -> cancelled
 |---|---|
 | `GET /api/v2/retail/org-units` | 获取有权限的组织树 |
 | `POST /api/v2/retail/org-units` | 创建组织单元 |
+| `GET/POST /api/v2/retail/memberships` | 查询或新增人员归属 |
+| `GET/PUT/PATCH/DELETE /api/v2/retail/memberships/{id}` | 管理岗位、主管、借调和作用域权限 |
 | `GET /api/v2/retail/staff/workload` | 查询日期范围内的人员负荷 |
 | `PUT /api/v2/retail/staff/{id}/capacity` | 调整人员容量 |
 | `POST /api/v2/retail/templates` | 创建任务模板 |
