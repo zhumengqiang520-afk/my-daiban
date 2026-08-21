@@ -4,13 +4,10 @@ env:
   DO_NOT_TRACK: 1
 
 on:
-  pull_request:
-  merge_group:
-  push:
-    tags:
-      - v*
-    branches:
-      - main
+  # The upstream workflow depends on Vikunja's private runners and release
+  # secrets. Keep it available for maintainers without producing a permanent
+  # startup_failure on every push to this deployment fork.
+  workflow_dispatch:
 
 concurrency:
   # main merges use a unique run_id so they don't cancel each other
