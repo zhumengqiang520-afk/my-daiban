@@ -1,0 +1,20 @@
+{$DOMAIN} {
+	encode zstd gzip
+
+	@source path /source-code
+	redir @source {$SOURCE_CODE_URL} 302
+
+	header {
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	request_body {
+		max_size 55MB
+	}
+
+	reverse_proxy app:3456
+}
+

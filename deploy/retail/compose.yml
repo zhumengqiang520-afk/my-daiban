@@ -1,0 +1,89 @@
+name: retail-taskboard
+
+services:
+  db:
+    image: postgres:16.14-alpine3.22
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB in .env}
+      POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      TZ: Asia/Shanghai
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    networks: [backend]
+
+  app:
+    image: retail-taskboard:${IMAGE_TAG:-local}
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+      args:
+        RELEASE_VERSION: ${IMAGE_TAG:-local}
+    restart: unless-stopped
+    user: ${APP_UID:-1000}:${APP_GID:-1000}
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      VIKUNJA_SERVICE_PUBLICURL: https://${DOMAIN:?set DOMAIN in .env}/
+      VIKUNJA_SERVICE_SECRET: ${SERVICE_SECRET:?set SERVICE_SECRET in .env}
+      VIKUNJA_SERVICE_ENABLEREGISTRATION: ${ENABLE_REGISTRATION:-false}
+      VIKUNJA_SERVICE_TIMEZONE: Asia/Shanghai
+      VIKUNJA_DATABASE_TYPE: postgres
+      VIKUNJA_DATABASE_HOST: db
+      VIKUNJA_DATABASE_DATABASE: ${POSTGRES_DB}
+      VIKUNJA_DATABASE_USER: ${POSTGRES_USER}
+      VIKUNJA_DATABASE_PASSWORD: ${POSTGRES_PASSWORD}
+      VIKUNJA_DATABASE_SSLMODE: disable
+      VIKUNJA_FILES_BASEPATH: /app/vikunja/files
+      VIKUNJA_FILES_MAXSIZE: 50MB
+      VIKUNJA_RETAIL_ENABLED: "true"
+      VIKUNJA_RETAIL_DEFAULTDAILYCAPACITYMINUTES: "480"
+      VIKUNJA_RETAIL_OVERLOADWARNINGPERCENT: "80"
+      TZ: Asia/Shanghai
+    volumes:
+      - ./data/files:/app/vikunja/files
+      - ./backups:/backups
+    healthcheck:
+      test: ["CMD", "/app/vikunja/vikunja", "healthcheck"]
+      interval: 30s
+      timeout: 15s
+      retries: 5
+      start_period: 45s
+    networks: [backend, edge]
+
+  caddy:
+    image: caddy:2.11.4-alpine
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+    environment:
+      DOMAIN: ${DOMAIN:?set DOMAIN in .env}
+      SOURCE_CODE_URL: ${SOURCE_CODE_URL:?set SOURCE_CODE_URL in .env}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    networks: [edge]
+
+networks:
+  backend:
+    internal: true
+  edge:
+
+volumes:
+  postgres-data:
+  caddy-data:
+  caddy-config:

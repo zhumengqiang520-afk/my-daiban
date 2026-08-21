@@ -66,4 +66,17 @@ describe('retailService', () => {
 			},
 		})
 	})
+
+	it('updates staff membership through the partial-update endpoint', async () => {
+		http.request.mockResolvedValue({data: {id: 12, job_title: '店长', active: false}})
+
+		const membership = await retailService.updateMembership(12, {jobTitle: '店长', active: false})
+
+		expect(http.request).toHaveBeenCalledWith({
+			method: 'patch',
+			url: '/api/v2/retail/memberships/12',
+			data: {job_title: '店长', active: false},
+		})
+		expect(membership).toMatchObject({id: 12, jobTitle: '店长', active: false})
+	})
 })
